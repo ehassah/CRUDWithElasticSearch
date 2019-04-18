@@ -69,9 +69,9 @@ namespace LoadData
              client = new ElasticClient(settings);
 
 
-            TestInsert();
+            //TestInsert();
 
-            //TestTermQuery();
+            TestTermQuery();
 
             //TestMatchPhrase();
 
@@ -80,8 +80,20 @@ namespace LoadData
 
         private void TestTermQuery()
         {
-            var result = client.Search<Content>(s =>
-                s.From(0).Size(10000).Type("content").Query(q => q.Term(t => t.ContentId, 2)));
+            //getting all the records
+           // var result = client.Search<Recipes>(s => s
+           //.Index("recipes")
+           //.Type("recipes")
+           //.From(0)
+           //.Size(1000)
+           //.Query(q => q.MatchAll())).Documents;
+
+            //foreach (var item in result)
+            //{
+            //    Console.WriteLine(item.Title);
+            //}
+            //var result = client.Search<Content>(s =>
+            //    s.From(0).Size(10000).Type("recipes").Query(q => q.Term(t => t.ContentId, 2)));
             /*
             GET contentidx/content/_search
             {
@@ -95,27 +107,30 @@ namespace LoadData
 
             string[] matchTerms =
             {
-                "The quick",  // will find two entries.  Two with "the" and one with "quick"(but that has "the" as well with a score of 2)
-                "Football",
-                "Hockey",
-                "Chicago Bears",
-                "St. Louis"
+                "Cucumber-Yogurt Salad with Mint ",  // will find two entries.  Two with "the" and one with "quick"(but that has "the" as well with a score of 2)
+                "Roast Beef Salad with Cabbage and Horseradish ",
+                "Asian Noodles with Barbecued Duck Confit ",
+                "Sausage Fennel Stuffing ",
+                "Cranberry, Quince, and Pearl Onion Compote "
             };
-
             // Match terms would come from what the user typed in
-            foreach (var term in matchTerms)
-            {
-                result = client.Search<Content>(s =>
-                   s
-                   .From(0)
-                   .Size(10000)
-                   .Type("content")
-                   .Query(q => q.Match(mq => mq.Field(f => f.ContentText).Query(term))));
+
+            var res = client.Search<Recipes>(s =>
+               s
+               .From(0)
+               .Size(10000)
+               .Type("recipes")
+               .Query(q => q.Match(mq => mq.Field(f => f.Title).Query("Sausage Fennel Stuffing"))));
+
+//            var response = client.Search<Recipes>(s => s
+//.Index("recipes")
+//.Type("recipes")
+//.Query(q => q.Term(t => t.Field("_id").Value("mcnxAGoBncKpzK11RbDT"))));
                 // print out the result.
-            }
+            
         }
 
-        private void TestMatchPhrase()
+            private void TestMatchPhrase()
         {
             // Exact phrase matching
             string[] matchPhrases =
